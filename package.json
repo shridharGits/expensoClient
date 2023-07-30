@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx parcel index.html"
+    "start": "npx parcel serve --port 3000 index.html"
   },
   "keywords": [],
   "author": "",

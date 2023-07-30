@@ -3,6 +3,7 @@ import Header from "./Header";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import ErrorMessage from "./ErrorMessage";
+import { HOST_URL } from "./Constants";
 
 const initialState = {
   firstname: "",
@@ -11,6 +12,9 @@ const initialState = {
   password: "",
   monthlyIncome: 0,
   phone: 0,
+  needs: 50,
+  wants: 30,
+  saving: 20,
 };
 const formReducer = (state, action) => {
   switch (action.type) {
@@ -29,20 +33,34 @@ const SignUp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios
-      .post("http://localhost:3000/api/users/signup", state)
-      .then((res) => {
-        // console.log(res.data.user);
-        navigate("/signin");
-      })
-      .catch((e) => {
-        setSignUpFailedMessage(e.response.data.msg);
-      });
+    if (
+      Number(state.needs) + Number(state.wants) + Number(state.saving) !=
+      100
+    ) {
+      setSignUpFailedMessage(
+        "Total Sum of Wants, Needs and Saving Should be 100"
+      );
+    } else {
+      axios
+        .post(`${HOST_URL}/users/signup`, JSON.stringify(state), {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          // console.log(res.data.user);
+          navigate("/signin");
+        })
+        .catch((e) => {
+          console.log(e);
+          setSignUpFailedMessage(e.response.data.msg);
+        });
+    }
   };
   return (
     <div className="overflow-x-hidden">
       <Header />
-      {signUpFailedMessage.length > 0 && (
+      {signUpFailedMessage?.length > 0 && (
         <ErrorMessage message={signUpFailedMessage} />
       )}
       <form className="p-4" onSubmit={handleSubmit}>
@@ -99,6 +117,42 @@ const SignUp = () => {
             name="monthlyIncome"
             onChange={(e) => handleChange("monthlyIncome", e.target.value)}
           />
+        </div>
+        <div className="flex justify-between mt-5">
+          <div>
+            <p className="w-40 h-full item-center border-solid border-2 border-emerald-300 text-center rounded-lg p-2">
+              ADD YOUR FINANCE RULE (Default: 50% needs, 30% wants, 20% saving)
+            </p>
+          </div>
+          <div className="w-1/2 flex flex-col">
+            <input
+              className="h-10  border-solid border-2 border-indigo-400 rounded-lg p-2"
+              type="number"
+              placeholder="50"
+              required
+              name="needs"
+              onChange={(e) => handleChange("needs", e.target.value ?? 50)}
+              value={state.needs}
+            />
+            <input
+              className="h-10 mt-1 border-solid border-2 border-indigo-400 rounded-lg p-2"
+              type="number"
+              placeholder="30"
+              required
+              name="wants"
+              onChange={(e) => handleChange("wants", e.target.value ?? 30)}
+              value={state.wants}
+            />
+            <input
+              className="h-10 mt-1 w-full border-solid border-2 border-indigo-400 rounded-lg p-2"
+              type="number"
+              placeholder="20"
+              required
+              name="saving"
+              onChange={(e) => handleChange("saving", e.target.value ?? 20)}
+              value={state.saving}
+            />
+          </div>
         </div>
         <input
           type="submit"

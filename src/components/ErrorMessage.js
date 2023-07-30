@@ -1,9 +1,10 @@
 import React from "react";
 
-const ErrorMessage = ({ message }) => {
+const ErrorMessage = ({ message, color }) => {
+  console.log(`class : ${color} text-center`);
   return (
     <div>
-      <p className="text-red-700 text-center">{message}</p>
+      <p className={`${color} text-center font-medium`}>{message}</p>
     </div>
   );
 };

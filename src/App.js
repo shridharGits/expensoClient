@@ -4,6 +4,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./components/HomePage";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
+import Dashboard from "./components/Dashboard";
+import Header2 from "./components/Header2";
 
 const App = () => {
   return <div className="">Here we go again!</div>;
@@ -13,6 +15,7 @@ const appRouter = createBrowserRouter([
   {
     path: "/",
     element: <HomePage />,
+    // element: <Dashboard />,
   },
   {
     path: "/signin",
@@ -21,6 +24,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/signup",
     element: <SignUp />,
+  },
+  {
+    path: "/dashboard",
+    element: <Dashboard />,
   },
 ]);
 
