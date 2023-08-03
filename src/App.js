@@ -6,6 +6,7 @@ import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import Dashboard from "./components/Dashboard";
 import Header2 from "./components/Header2";
+import ExpensePage from "./components/ExpensePage";
 
 const App = () => {
   return <div className="">Here we go again!</div>;
@@ -28,6 +29,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/dashboard",
     element: <Dashboard />,
+  },
+  {
+    path: "/expenses/:id",
+    element: <ExpensePage />,
   },
 ]);
 

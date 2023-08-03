@@ -1,23 +1,47 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HOST_URL } from "./Constants";
+import { useNavigate } from "react-router-dom";
 
-const AddExpense = ({ isOpen }) => {
-  // initial expense date
-  const initialState = {
-    description: "",
-    needs: "",
-    wants: "",
-    totalPrice: "",
-    expenseDate: new Date(),
+const AddExpense = ({ isOpen, handleAddExpenseOpenClose, editData }) => {
+  const [isClose, setIsClose] = useState(false);
+  const navigate = useNavigate();
+  const handleClose = (e) => {
+    e.preventDefault();
+    setIsClose(true);
   };
-  // to manage to divide the expense or not
-  const [isDivide, setIsDivide] = useState(false);
-  // to manage all expense data
-  const [expenseData, setExpenseData] = useState(initialState);
-  // to manage the need or want
-  const [selectedValue, setSelectedValue] = useState("needsTotal");
 
+  // initial expense date
+  // const initialState = {
+  //   description: editData?.description ?? "",
+  //   needs: editData?.needs ?? "",
+  //   wants: editData?.wants ?? "",
+  //   totalPrice: editData?.price ?? "",
+  //   expenseDate: new Date(
+  //     editData?.date ?? editData?.createdAt ?? new Date()
+  //   ),
+  // };
+  const [expenseData, setExpenseData] = useState({});
+  const [isDivide, setIsDivide] = useState(false);
+  const [selectedValue, setSelectedValue] = useState("needsTotal");
+  useEffect(() => {
+    console.log(`edit Data: `, editData);
+    setExpenseData({
+      description: editData?.description ?? "",
+      needs: editData?.ruleTags?.needs !== 0 ? editData?.ruleTags?.needs : "",
+      wants: editData?.ruleTags?.wants !== 0 ? editData?.ruleTags?.wants : "",
+      totalPrice: editData?.price ?? "",
+      expenseDate: new Date(
+        editData?.date ?? editData?.createdAt ?? new Date()
+      ),
+    });
+    setIsDivide(
+      editData?.ruleTags?.needs && editData?.ruleTags?.wants ? true : false
+    );
+    setSelectedValue(editData?.ruleTags?.needs ? "needsTotal" : "wantsTotal");
+  }, [editData]);
+
+  // console.log(expenseData);
   const handleDivide = () => {
     setExpenseData((prevState) => ({
       ...prevState,
@@ -29,20 +53,44 @@ const AddExpense = ({ isOpen }) => {
   };
 
   // on form submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-    axios
-      .post(`${HOST_URL}/invoices/add`, JSON.stringify(expenseData), {
-        headers: {
-          Authorization: `bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        console.log(res);
-      });
-    e.preventDefault();
+    if (editData) {
+      console.log(`EXPENSE: `, expenseData);
+      const updatedExpenseData = await axios.patch(
+        `${HOST_URL}/expenses/${editData?._id}`,
+        JSON.stringify(expenseData),
+        {
+          headers: {
+            Authorization: `bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(`UPDATED_EXPENSE`, updatedExpenseData);
+    } else {
+      axios
+        .post(`${HOST_URL}/expenses/add`, JSON.stringify(expenseData), {
+          headers: {
+            Authorization: `bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          if (res.status == 201 && res.data?.invoice) {
+            handleAddExpenseOpenClose(!isOpen);
+            setExpenseData({
+              description: "",
+              needs: "",
+              wants: "",
+              totalPrice: "",
+              expenseDate: new Date(),
+            });
+          }
+          // console.log(res);
+        });
+    }
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,6 +101,7 @@ const AddExpense = ({ isOpen }) => {
     }
     // if totalPrice then empty needs and wants, and fill needs or wants
     else if (name == "totalPrice") {
+      console.log("here");
       setExpenseData((prevState) => ({
         ...prevState,
         ["needs"]: "",
@@ -79,19 +128,23 @@ const AddExpense = ({ isOpen }) => {
   const handleTotalPriceRule = (e) => {
     const name = e.target.value;
     if (name == "needsTotal") {
-      console.log(expenseData);
       setExpenseData((prevState) => ({
         ...prevState,
         ["needs"]:
-          prevState.wants.length > 0 ? prevState.wants : prevState.needs,
+          prevState.wants.length > 0 || prevState.wants > 0
+            ? prevState.wants
+            : prevState.needs,
         ["wants"]: "",
       }));
     } else {
+      // console.log(name);
       console.log(name);
       setExpenseData((prevState) => ({
         ...prevState,
         ["wants"]:
-          prevState.needs.length > 0 ? prevState.needs : prevState.wants,
+          prevState.needs.length > 0 || prevState.needs > 0
+            ? prevState.needs
+            : prevState.wants,
         ["needs"]: "",
       }));
     }
@@ -105,7 +158,11 @@ const AddExpense = ({ isOpen }) => {
       className={`${
         isOpen ? "translate-y-0" : "translate-y-full"
       } z-60 top-24 w-full h-full rounded-t-3xl text-lg bg-white fixed transition ease-in-out duration-300`}>
-      <p className="text-center pt-3 font-semibold">ADD EXPENSE</p>
+      <div className="relative flex flex-row">
+        <p className="relative text-center pt-3 font-semibold w-full">
+          ADD EXPENSE
+        </p>
+      </div>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col items-center">
           <input
@@ -172,7 +229,7 @@ const AddExpense = ({ isOpen }) => {
           />
         </div>
         <input
-          className="fixed z-60 bg-red-500 inset-x-0 bottom-24 h-16 rounded-t-lg font-bold text-xl text-white"
+          className="fixed z-50 bg-red-500 inset-x-0 bottom-24 h-16 rounded-t-lg font-bold text-xl text-white"
           value="ADD EXPENSE"
           type="SUBMIT"
         />

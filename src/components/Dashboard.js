@@ -18,8 +18,7 @@ const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(initialState);
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleAddExpense = (e) => {
-    e.preventDefault();
+  const handleAddExpenseOpenClose = () => {
     setIsOpen(!isOpen);
   };
 
@@ -50,12 +49,12 @@ const Dashboard = () => {
   }
   useEffect(() => {
     getData();
-  }, []);
+  }, [isOpen]);
 
   return (
     <div className="relative tracking-normal flex flex-col bg-slate-900 min-h-screen">
       <Header2 />
-      <div className="bg-white rounded-t-3xl h-screen">
+      <div className="bg-white rounded-t-3xl h-screen pt-4">
         <p className="text-center pb-3 font-semibold">TODAY'S BUDGET LEFT</p>
         <Rulebox
           needs={dashboardData.needs}
@@ -69,13 +68,23 @@ const Dashboard = () => {
           <Expenses transactions={dashboardData.dailyTransactions} />
         </div>
       </div>
-      <div>
-        <AddExpense isOpen={isOpen} />
+      <div className="relative">
+        <AddExpense
+          isOpen={isOpen}
+          handleAddExpenseOpenClose={handleAddExpenseOpenClose}
+        />
+        {isOpen && (
+          <button
+            className="fixed top-24 right-0 p-2 rounded-lg mr-2 mt-2 bg-indigo-400 z-50 transition ease-in-out duration-300"
+            onClick={handleAddExpenseOpenClose}>
+            X
+          </button>
+        )}
       </div>
       <div className={`${isOpen ? "invisible" : ""}`}>
         <button
           className="fixed bg-teal-500 z-0 inset-x-0 bottom-0 h-16 rounded-t-lg"
-          onClick={handleAddExpense}>
+          onClick={handleAddExpenseOpenClose}>
           <p className="text-white font-bold text-xl">ADD EXPENSE</p>
         </button>
       </div>

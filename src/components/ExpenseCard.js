@@ -1,12 +1,7 @@
 import React, { useState } from "react";
-import AddExpense from "./AddExpense";
+import { useNavigate } from "react-router-dom";
 const ExpenseCard = ({ description, createdAt, date, price }) => {
   const day = new Date(createdAt).toString().split(" ");
-  const commonCss = "m-1 p-1 rounded-lg";
-  const [isOpen, setIsOpen] = useState(false);
-  const handleOpen = () => {
-    setIsOpen(!isOpen);
-  };
   return (
     <div className="flex bg-gray-200 rounded-lg p-2 m-2">
       <div className="w-full">
@@ -18,11 +13,7 @@ const ExpenseCard = ({ description, createdAt, date, price }) => {
       </div>
       <div className="w-1/3 font-bold">
         <p className="items-center">₹ {price}</p>
-        <button className="text-sm bg-gray-300 pl-2 pr-2" onClick={handleOpen}>
-          EDIT
-        </button>
       </div>
-      <AddExpense isOpen={isOpen} />
     </div>
   );
 };
