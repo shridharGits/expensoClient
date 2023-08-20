@@ -50,7 +50,7 @@ const SignIn = () => {
         }
       })
       .catch((e) => {
-        console.log(e.response.data.msg);
+        console.log("login failed");
         setSignUpFailedMessage((prevState) => {
           return {
             ...prevState,

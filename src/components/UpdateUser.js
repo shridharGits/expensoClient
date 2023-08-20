@@ -1,4 +1,4 @@
-import { useState, useReducer } from "react";
+import { useState, useReducer, useEffect } from "react";
 import Header from "./Header";
 import Header2 from "./Header2";
 import axios from "axios";
@@ -6,27 +6,70 @@ import { useNavigate } from "react-router-dom";
 import ErrorMessage from "./ErrorMessage";
 import { HOST_URL } from "./Constants";
 
-const initialState = {
-  firstname: "",
-  lastname: "",
-  email: "",
-  password: "",
-  monthlyIncome: 0,
-  phone: 0,
-  needs: 50,
-  wants: 30,
-  saving: 20,
-};
 const formReducer = (state, action) => {
   switch (action.type) {
     case "UPDATE":
       return { ...state, [action.field]: action.value };
+    case "SET_DATA":
+      console.log("here", action.data.name?.first);
+      return { ...state, ["firstname"]: action.data.name?.first };
+    default:
+      return state;
   }
   return state;
 };
 const SignUp = () => {
+  const [user, setUser] = useState({});
+  const [monthlyIncome, setMonthlyIncome] = useState("");
+
+  const getUser = async () => {
+    const data = await axios.get(`${HOST_URL}/user/profile`, {
+      headers: {
+        Authorization: `bearer ${token}`,
+      },
+    });
+    setUser(data.data.user);
+    if (user.monthlyIncome) {
+      const monthlyIncomeValue = Object.values(user.monthlyIncome);
+      const income = monthlyIncomeValue
+        ? monthlyIncomeValue[monthlyIncomeValue.length - 1]
+        : "";
+      setMonthlyIncome(income);
+    }
+  };
+  useEffect(() => {
+    getUser();
+    dispatch({ type: "SET_DATA", data: user });
+  }, []);
+  const initialState = {
+    firstname: "sasas",
+    lastname: "",
+    email: "",
+    password: "",
+    monthlyIncome: "",
+    phone: "",
+    needs: 50,
+    wants: 30,
+    saving: 20,
+  };
+  useEffect(() => {
+    console.log(user?.name?.first);
+  }, [initialState]);
+  //   const initialState = {
+  //     firstname: "hey",
+  //     lastname: user?.name?.last,
+  //     email: user?.email,
+  //     password: "hey",
+  //     monthlyIncome: monthlyIncome,
+  //     phone: user?.phone,
+  //     needs: user?.rule?.needs,
+  //     wants: user?.rule?.needs,
+  //     saving: user?.rule?.needs,
+  //   };
+  const token = localStorage.getItem("token");
   const [state, dispatch] = useReducer(formReducer, initialState);
   const [signUpFailedMessage, setSignUpFailedMessage] = useState("");
+
   const navigate = useNavigate();
   const handleChange = (field, value) => {
     dispatch({ type: "UPDATE", field, value });
@@ -133,7 +176,7 @@ const SignUp = () => {
               required
               name="needs"
               onChange={(e) => handleChange("needs", e.target.value ?? 50)}
-              value={state.needs}
+              value={state?.needs}
             />
             <input
               className="h-10 mt-1 border-solid border-2 border-indigo-400 rounded-lg p-2"
@@ -142,7 +185,7 @@ const SignUp = () => {
               required
               name="wants"
               onChange={(e) => handleChange("wants", e.target.value ?? 30)}
-              value={state.wants}
+              value={state?.wants}
             />
             <input
               className="h-10 mt-1 w-full border-solid border-2 border-indigo-400 rounded-lg p-2"
@@ -151,7 +194,7 @@ const SignUp = () => {
               required
               name="saving"
               onChange={(e) => handleChange("saving", e.target.value ?? 20)}
-              value={state.saving}
+              value={state?.saving}
             />
           </div>
         </div>
@@ -160,6 +203,7 @@ const SignUp = () => {
           value="SIGN UP"
           className="font-bold text-white mt-5 h-12 rounded-lg border-solid border-2 w-full bg-indigo-400"
         />
+        <p>{JSON.stringify(state)}</p>
       </form>
     </div>
   );

@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { HOST_URL } from "./Constants";
 import Header2 from "./Header2";
 import AddExpense from "./AddExpense";
@@ -9,6 +9,7 @@ const ExpensePage = () => {
   const params = useParams();
   const { id } = params;
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
   const handleAddExpenseOpenClose = () => {
     setIsOpen(!isOpen);
   };
@@ -23,6 +24,16 @@ const ExpensePage = () => {
       setExpense(res.data.invoice);
     } catch (e) {
       console.log(`ERROR: ${e.message}`);
+    }
+  };
+  const handleDelete = async () => {
+    const res = await axios.delete(`${HOST_URL}/expenses/${id}`, {
+      headers: {
+        Authorization: `bearer ${token}`,
+      },
+    });
+    if (res.status == 200) {
+      navigate("/dashboard");
     }
   };
   const [expense, setExpense] = useState({});
@@ -46,7 +57,11 @@ const ExpensePage = () => {
           <p>{expense.date}</p>
         </div>
         <div className="relative flex justify-between">
-          <button className="bg-blue-300 p-2 rounded-lg w-24">DELETE</button>
+          <button
+            className="bg-blue-300 p-2 rounded-lg w-24"
+            onClick={handleDelete}>
+            DELETE
+          </button>
           <AddExpense
             isOpen={isOpen}
             handleAddExpenseOpenClose={handleAddExpenseOpenClose}

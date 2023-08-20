@@ -33,7 +33,7 @@ const Dashboard = () => {
       })
       .then((res) => {
         const data = res?.data?.dailyBudgetStats;
-        console.log(data);
+        console.log("dashboard successful");
         setDashboardData({
           needs: parseFloat(data.needsLeft).toFixed(2),
           wants: parseInt(data.wantsLeft).toFixed(2),
@@ -42,6 +42,7 @@ const Dashboard = () => {
         });
       })
       .catch((e) => {
+        console.log(e);
         e?.response?.status === 401
           ? navigate("/signin")
           : navigate("/dashboard");

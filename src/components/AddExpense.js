@@ -131,9 +131,9 @@ const AddExpense = ({ isOpen, handleAddExpenseOpenClose, editData }) => {
       setExpenseData((prevState) => ({
         ...prevState,
         ["needs"]:
-          prevState.wants.length > 0 || prevState.wants > 0
-            ? prevState.wants
-            : prevState.needs,
+          prevState?.wants?.length > 0 || prevState?.wants > 0
+            ? prevState?.wants
+            : prevState?.needs,
         ["wants"]: "",
       }));
     } else {
