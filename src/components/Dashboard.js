@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, * as others from 'axios';
 import React, { useEffect, useState } from "react";
 import { HOST_URL } from "./Constants";
 import { useNavigate } from "react-router-dom";

@@ -1,6 +1,6 @@
 import { useState, useReducer } from "react";
 import Header from "./Header";
-import axios from "axios";
+import axios, * as others from 'axios';
 import { HOST_URL } from "./Constants";
 import ErrorMessage from "./ErrorMessage";
 import { useNavigate } from "react-router-dom";
