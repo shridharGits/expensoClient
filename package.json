@@ -2,9 +2,10 @@
   "name": "expensoclient",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "source": "index.html",
   "scripts": {
-    "start": "npx parcel serve --port 3000 index.html"
+    "start": "npx parcel serve --port 3000 index.html",
+    "build": "parcel build index.html"
   },
   "keywords": [],
   "author": "",
