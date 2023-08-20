@@ -7,7 +7,7 @@ import SignUp from "./components/SignUp";
 import Dashboard from "./components/Dashboard";
 import Header2 from "./components/Header2";
 import ExpensePage from "./components/ExpensePage";
-
+import UpdateUser from "./components/UpdateUser";
 const App = () => {
   return <div className="">Here we go again!</div>;
 };
@@ -33,6 +33,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/expenses/:id",
     element: <ExpensePage />,
+  },
+  {
+    path: "/users/update",
+    element: <UpdateUser />,
   },
 ]);
 
