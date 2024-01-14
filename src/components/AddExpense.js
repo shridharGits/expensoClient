@@ -58,21 +58,25 @@ const AddExpense = ({ isOpen, handleAddExpenseOpenClose, editData }) => {
     const token = localStorage.getItem("token");
     if (editData) {
       console.log(`EXPENSE: `, expenseData);
-      const response = await fetch(`${HOST_URL}/expenses/${editData?._id}`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(expenseData),
-      });
-    
-      if (response.ok) {
-        const updatedExpenseData = await response.json();
-        console.log(`UPDATED_EXPENSE`, updatedExpenseData);
-      } else {
-        throw new Error('Failed to update expense');
+      try {
+        const response = await axios.patch(`${HOST_URL}/expenses/${editData?._id}`, JSON.stringify(expenseData), {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+      
+        if (response.status === 200) {
+          const updatedExpenseData = response.data; // Use response.data in Axios instead of response.json()
+          console.log(`UPDATED_EXPENSE`, updatedExpenseData);
+        } else {
+          throw new Error('Failed to update expense');
+        }
+      } catch (error) {
+        console.error(`ERROR: ${error.message}`);
+        // Handle error here
       }
+      
     } else {
       fetch(`${HOST_URL}/expenses/add`, {
         method: 'POST',
