@@ -42,8 +42,7 @@ const SignUp = () => {
         "Total Sum of Wants, Needs and Saving Should be 100"
       );
     } else {
-      axios
-        .post(`${HOST_URL}/users/signup`, {...state}, {
+      fetch(`${HOST_URL}/users/signup`, {...state}, {
           headers: {
             "Content-Type": "application/json",
           },
@@ -56,6 +55,20 @@ const SignUp = () => {
           console.log(e);
           setSignUpFailedMessage(e.response.data.msg);
         });
+      // axios
+      //   .post(`${HOST_URL}/users/signup`, {...state}, {
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //   })
+      //   .then((res) => {
+      //     // console.log(res.data.user);
+      //     navigate("/signin");
+      //   })
+      //   .catch((e) => {
+      //     console.log(e);
+      //     setSignUpFailedMessage(e.response.data.msg);
+      //   });
     }
   };
   return (
