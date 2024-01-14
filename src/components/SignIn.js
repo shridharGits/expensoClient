@@ -29,8 +29,7 @@ const SignIn = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios
-      .post(`${HOST_URL}/users/signin`, JSON.stringify(state), {
+    fetch(`${HOST_URL}/users/signin`, JSON.stringify(state), {
         headers: {
           "Content-Type": "application/json",
         },

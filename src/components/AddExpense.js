@@ -70,8 +70,7 @@ const AddExpense = ({ isOpen, handleAddExpenseOpenClose, editData }) => {
       );
       console.log(`UPDATED_EXPENSE`, updatedExpenseData);
     } else {
-      axios
-        .post(`${HOST_URL}/expenses/add`, JSON.stringify(expenseData), {
+      fetch(`${HOST_URL}/expenses/add`, JSON.stringify(expenseData), {
           headers: {
             Authorization: `bearer ${token}`,
             "Content-Type": "application/json",

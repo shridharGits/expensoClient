@@ -85,8 +85,7 @@ const SignUp = () => {
         "Total Sum of Wants, Needs and Saving Should be 100"
       );
     } else {
-      axios
-        .post(`${HOST_URL}/users/signup`, JSON.stringify(state), {
+      fetch(`${HOST_URL}/users/signup`, JSON.stringify(state), {
           headers: {
             "Content-Type": "application/json",
           },
