@@ -43,7 +43,7 @@ const SignUp = () => {
       );
     } else {
       axios
-        .post(`${HOST_URL}/users/signup`, JSON.stringify(state), {
+        .post(`${HOST_URL}/users/signup`, {...state}, {
           headers: {
             "Content-Type": "application/json",
           },
