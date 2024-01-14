@@ -23,7 +23,7 @@ const SignUp = () => {
   const [monthlyIncome, setMonthlyIncome] = useState("");
 
   const getUser = async () => {
-    const data = await axios.get(`${HOST_URL}/user/profile`, {
+    const data = await fetch(`${HOST_URL}/user/profile`, {
       headers: {
         Authorization: `bearer ${token}`,
       },

@@ -58,7 +58,7 @@ const AddExpense = ({ isOpen, handleAddExpenseOpenClose, editData }) => {
     const token = localStorage.getItem("token");
     if (editData) {
       console.log(`EXPENSE: `, expenseData);
-      const updatedExpenseData = await axios.patch(
+      const updatedExpenseData = await fetch(
         `${HOST_URL}/expenses/${editData?._id}`,
         JSON.stringify(expenseData),
         {

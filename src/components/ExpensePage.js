@@ -15,7 +15,7 @@ const ExpensePage = () => {
   };
   const getExpenseData = async () => {
     try {
-      const res = await axios.get(`${HOST_URL}/expenses/${id}`, {
+      const res = await fetch(`${HOST_URL}/expenses/${id}`, {
         headers: {
           Authorization: `bearer ${token}`,
         },
@@ -27,7 +27,7 @@ const ExpensePage = () => {
     }
   };
   const handleDelete = async () => {
-    const res = await axios.delete(`${HOST_URL}/expenses/${id}`, {
+    const res = await fetch(`${HOST_URL}/expenses/${id}`, {
       headers: {
         Authorization: `bearer ${token}`,
       },
