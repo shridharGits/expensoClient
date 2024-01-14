@@ -42,10 +42,12 @@ const SignUp = () => {
         "Total Sum of Wants, Needs and Saving Should be 100"
       );
     } else {
-      fetch(`${HOST_URL}/users/signup`, {...state}, {
+        fetch(`${HOST_URL}/users/signup`, {
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify(state)
         })
         .then((res) => {
           // console.log(res.data.user);

@@ -58,37 +58,54 @@ const AddExpense = ({ isOpen, handleAddExpenseOpenClose, editData }) => {
     const token = localStorage.getItem("token");
     if (editData) {
       console.log(`EXPENSE: `, expenseData);
-      const updatedExpenseData = await fetch(
-        `${HOST_URL}/expenses/${editData?._id}`,
-        JSON.stringify(expenseData),
-        {
-          headers: {
-            Authorization: `bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(`UPDATED_EXPENSE`, updatedExpenseData);
+      const response = await fetch(`${HOST_URL}/expenses/${editData?._id}`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(expenseData),
+      });
+    
+      if (response.ok) {
+        const updatedExpenseData = await response.json();
+        console.log(`UPDATED_EXPENSE`, updatedExpenseData);
+      } else {
+        throw new Error('Failed to update expense');
+      }
     } else {
-      fetch(`${HOST_URL}/expenses/add`, JSON.stringify(expenseData), {
-          headers: {
-            Authorization: `bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+      fetch(`${HOST_URL}/expenses/add`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(expenseData),
+      })
+        .then((response) => {
+          if (response.status === 201) {
+            return response.json();
+          } else {
+            throw new Error('Failed to add expense');
+          }
         })
-        .then((res) => {
-          if (res.status == 201 && res.data?.invoice) {
+        .then((data) => {
+          if (data?.invoice) {
             handleAddExpenseOpenClose(!isOpen);
             setExpenseData({
-              description: "",
-              needs: "",
-              wants: "",
-              totalPrice: "",
+              description: '',
+              needs: '',
+              wants: '',
+              totalPrice: '',
               expenseDate: new Date(),
             });
           }
-          // console.log(res);
+        })
+        .catch((error) => {
+          console.error('Failed to add expense', error);
+          // Handle error here
         });
+      
     }
   };
   const handleChange = (e) => {
@@ -233,11 +250,11 @@ const AddExpense = ({ isOpen, handleAddExpenseOpenClose, editData }) => {
           type="SUBMIT"
         />
       </form>
-      <p>desc: {JSON.stringify(expenseData.description)}</p>
+      {/* <p>desc: {JSON.stringify(expenseData.description)}</p>
       <p>date: {JSON.stringify(expenseData.expenseDate)}</p>
       <p>needs: {JSON.stringify(expenseData.needs)}</p>
       <p>wants: {JSON.stringify(expenseData.wants)}</p>
-      <p>total: {JSON.stringify(expenseData.totalPrice)}</p>
+      <p>total: {JSON.stringify(expenseData.totalPrice)}</p> */}
     </div>
   );
 };

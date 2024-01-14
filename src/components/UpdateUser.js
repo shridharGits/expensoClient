@@ -11,7 +11,7 @@ const formReducer = (state, action) => {
     case "UPDATE":
       return { ...state, [action.field]: action.value };
     case "SET_DATA":
-      console.log("here", action.data.name?.first);
+      // console.log("here", action.data.name?.first);
       return { ...state, ["firstname"]: action.data.name?.first };
     default:
       return state;
@@ -23,19 +23,32 @@ const SignUp = () => {
   const [monthlyIncome, setMonthlyIncome] = useState("");
 
   const getUser = async () => {
-    const data = await fetch(`${HOST_URL}/user/profile`, {
-      headers: {
-        Authorization: `bearer ${token}`,
-      },
-    });
-    setUser(data.data.user);
-    if (user.monthlyIncome) {
-      const monthlyIncomeValue = Object.values(user.monthlyIncome);
-      const income = monthlyIncomeValue
-        ? monthlyIncomeValue[monthlyIncomeValue.length - 1]
-        : "";
-      setMonthlyIncome(income);
-    }
+    try {
+      const response = await fetch(`${HOST_URL}/user/profile`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+    
+      if (!response.ok) {
+        throw new Error('Profile update failed');
+      }
+      const data = await response.json();
+      setUser(data.user);
+    
+      if (user.monthlyIncome) {
+        const monthlyIncomeValue = Object.values(user.monthlyIncome);
+        const income = monthlyIncomeValue
+          ? monthlyIncomeValue[monthlyIncomeValue.length - 1]
+          : '';
+        setMonthlyIncome(income);
+      }
+    } catch (error) {
+      console.error('Profile update failed', error);
+      // Handle error here
+    }    
   };
   useEffect(() => {
     getUser();
@@ -53,7 +66,7 @@ const SignUp = () => {
     saving: 20,
   };
   useEffect(() => {
-    console.log(user?.name?.first);
+    // console.log(user?.name?.first);
   }, [initialState]);
   //   const initialState = {
   //     firstname: "hey",
@@ -85,17 +98,19 @@ const SignUp = () => {
         "Total Sum of Wants, Needs and Saving Should be 100"
       );
     } else {
-      fetch(`${HOST_URL}/users/signup`, JSON.stringify(state), {
+      fetch(`${HOST_URL}/users/signup`, {
+        method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify(state),
         })
         .then((res) => {
           // console.log(res.data.user);
           navigate("/signin");
         })
         .catch((e) => {
-          console.log(e);
+          // console.log(e);
           setSignUpFailedMessage(e.response.data.msg);
         });
     }

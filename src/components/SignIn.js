@@ -29,36 +29,40 @@ const SignIn = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch(`${HOST_URL}/users/signin`, JSON.stringify(state), {
-        headers: {
-          "Content-Type": "application/json",
-        },
+    fetch(`${HOST_URL}/users/signin`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(state),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Something Went Wrong!');
+        }
+        return response.json();
       })
-      .then((res) => {
-        if (!res.data.token) {
-          setSignUpFailedMessage((prevState) => {
-            return {
-              ...prevState,
-              message: "Something Went Wrong!",
-              color: "text-red-500",
-            };
-          });
+      .then((data) => {
+        if (!data.token) {
+          setSignUpFailedMessage((prevState) => ({
+            ...prevState,
+            message: 'Something Went Wrong!',
+            color: 'text-red-500',
+          }));
         } else {
-          localStorage.setItem("token", res.data.token);
-          navigate("/dashboard");
+          localStorage.setItem('token', data.token);
+          navigate('/dashboard');
         }
       })
-      .catch((e) => {
-        console.log("login failed");
-        setSignUpFailedMessage((prevState) => {
-          return {
-            ...prevState,
-            message: e.response.data.msg,
-            color: "text-red-500",
-          };
-        });
+      .catch((error) => {
+        console.log('login failed');
+        setSignUpFailedMessage((prevState) => ({
+          ...prevState,
+          message: error.message,
+          color: 'text-red-500',
+        }));
         console.log(signUpFailedMessage);
-      });
+      });    
   };
 
   const handleForgotPassword = () => {

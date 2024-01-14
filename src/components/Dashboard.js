@@ -26,26 +26,37 @@ const Dashboard = () => {
     const token = localStorage.getItem("token");
     console.log(token);
     fetch(`${HOST_URL}/dashboard`, {
-        headers: {
-          Authorization: `bearer ${token}`,
-        },
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        }
+        return response.json();
       })
-      .then((res) => {
-        const data = res?.data?.dailyBudgetStats;
-        console.log("dashboard successful");
+      .then((data) => {
+        const dailyBudgetStats = data?.dailyBudgetStats;
+        console.log('dashboard successful');
         setDashboardData({
-          needs: parseFloat(data.needsLeft).toFixed(2),
-          wants: parseInt(data.wantsLeft).toFixed(2),
-          savings: parseInt(data.savingsDone).toFixed(2),
-          dailyTransactions: data.invoices,
+          needs: parseFloat(dailyBudgetStats.needsLeft).toFixed(2),
+          wants: parseInt(dailyBudgetStats.wantsLeft).toFixed(2),
+          savings: parseInt(dailyBudgetStats.savingsDone).toFixed(2),
+          dailyTransactions: dailyBudgetStats.invoices,
         });
       })
-      .catch((e) => {
-        console.log(e);
-        e?.response?.status === 401
-          ? navigate("/signin")
-          : navigate("/dashboard");
+      .catch((error) => {
+        console.log(error);
+        if (error instanceof TypeError) {
+          // Network error or other issues
+          navigate('/dashboard');
+        } else if (error instanceof Error && error.message === 'Unauthorized') {
+          navigate('/signin');
+        }
       });
+    
   }
   useEffect(() => {
     getData();

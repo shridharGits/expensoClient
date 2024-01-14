@@ -15,26 +15,45 @@ const ExpensePage = () => {
   };
   const getExpenseData = async () => {
     try {
-      const res = await fetch(`${HOST_URL}/expenses/${id}`, {
+      const response = await fetch(`${HOST_URL}/expenses/${id}`, {
+        method: 'GET',
         headers: {
-          Authorization: `bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
-      console.log(res.data.invoice);
-      setExpense(res.data.invoice);
-    } catch (e) {
-      console.log(`ERROR: ${e.message}`);
+    
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data.invoice);
+        setExpense(data.invoice);
+      } else {
+        throw new Error('Failed to fetch expense data');
+      }
+    } catch (error) {
+      console.error(`ERROR: ${error.message}`);
+      // Handle error here
     }
+    
   };
   const handleDelete = async () => {
-    const res = await fetch(`${HOST_URL}/expenses/${id}`, {
-      headers: {
-        Authorization: `bearer ${token}`,
-      },
-    });
-    if (res.status == 200) {
-      navigate("/dashboard");
+    try {
+      const response = await fetch(`${HOST_URL}/expenses/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    
+      if (response.status === 200) {
+        navigate('/dashboard');
+      } else {
+        throw new Error('Failed to delete expense');
+      }
+    } catch (error) {
+      console.error(`ERROR: ${error.message}`);
+      // Handle error here
     }
+    
   };
   const [expense, setExpense] = useState({});
   const [isOpen, setIsOpen] = useState(false);
