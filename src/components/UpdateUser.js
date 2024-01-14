@@ -203,7 +203,6 @@ const SignUp = () => {
           value="SIGN UP"
           className="font-bold text-white mt-5 h-12 rounded-lg border-solid border-2 w-full bg-indigo-400"
         />
-        <p>{JSON.stringify(state)}</p>
       </form>
     </div>
   );
